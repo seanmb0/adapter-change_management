@@ -149,36 +149,14 @@ class ServiceNowAdapter extends EventEmitter {
    *
    * @param {ServiceNowAdapter~requestCallback} callback - The callback that
    *   handles the response.
-  */
+   */
   getRecord(callback) {
-    this.connector.get((data,error) => {
-      let returnedData = null;
-      if (error) {
-        log.error("GET request returned error: " + error);
-      } else {
-        log.trace("GET Request returned " + JSON.stringify(data));
-        if (data.body) {
-          let resultArr = JSON.parse(data.body).result;
-          let modifiedArr = [];
-          for (let i = 0; i < resultArr.length; i++) {
-            modifiedArr.push({
-              change_ticket_number: resultArr[i].number,
-              active: resultArr[i].active,
-              priority: resultArr[i].priority,
-              description: resultArr[i].description,
-              work_start: resultArr[i].work_start,
-              work_end: resultArr[i].work_end,
-              change_ticket_key: resultArr[i].sys_id
-            });
-          }
-          returnedData = modifiedArr;
-        }
-      }
-      return callback(returnedData, error);
-    });
+    /**
+     * Wrapper for this.connector's get() method.
+    */
+    this.connector.get(callback)
   }
 
-  
   /**
    * @memberof ServiceNowAdapter
    * @method postRecord
@@ -189,29 +167,10 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-    let dataError = null;
-    let dataReturn = null;
-    this.connector.post((data, error) => {
-      if (error) {
-          console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-      }
-      if (data.body) {
-        let body = JSON.parse(data.body).result;
-        let ticket = {};
-        ticket = {
-          "change_ticket_number": body.number,
-          "active": body.active,
-          "priority": body.priority,
-          "description": body.description,
-          "work_start": body.work_start,
-          "work_end": body.work_end,
-          "change_ticket_key": body.sys_id
-        }
-        dataReturn = ticket;
-        callback(dataReturn, dataError);
-      }
-    });
-  
+    /**
+     * Wrapper for this.connector's post() method.
+    */
+    this.connector.post(callback);
   }
 }
 
