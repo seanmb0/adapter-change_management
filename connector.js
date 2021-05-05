@@ -43,7 +43,6 @@ class ServiceNowConnector {
    */
 
 
-
   /**
    * @memberof ServiceNowConnector
    * @method constructUri
@@ -105,19 +104,21 @@ class ServiceNowConnector {
      * Check error and response code to make sure
      * response is good.
     */
+    callback.error = null;
+    callback.data = null;
     if (error) {
       console.error('Error present.');
-      callbackError = error;
+      callback.error = error;
     } else if (!validResponseRegex.test(response.statusCode)) {
       console.error('Bad response code.');
-      callbackError = response;
-    } else if this.isHibernating(response) {
-      callbackError = 'Service Now instance is hibernating';
-      console.error(callbackError);
+      callback.error = response;
+    } else if (this.isHibernating(response)) {
+      callback.error = 'Service Now instance is hibernating';
+      console.error(callback.error);
     } else {
-      callbackData = response;
+      callback.data = response;
     }
-    return callback(callbackData, callbackError);
+    return callback(callback.data, callback.error);
   }
 
   
@@ -148,10 +149,10 @@ class ServiceNowConnector {
     const requestOptions = {
       method: callOptions.method,
       auth: {
-        user: options.username,
-        pass: options.password,
+        user: this.options.username,
+        pass: this.options.password,
       },
-      baseUrl: options.url,
+      baseUrl: this.options.url,
       uri: uri,
     };  
     request(requestOptions, (error, response, body) => {
@@ -196,9 +197,9 @@ class ServiceNowConnector {
    *   Will be HTML text if hibernating instance.
    * @param {error} callback.error - The error property of callback.
    */
-  function post(callOptions, callback) {
+  post(callback) {
     let postCallOptions = { ...this.options };
-    callOptions.method = 'POST';
+    postCallOptions.method = 'POST';
     this.sendRequest(postCallOptions, (results, error) => callback(results, error));
   }
 

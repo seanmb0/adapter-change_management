@@ -2,7 +2,7 @@
 const options = {
   url: 'https://dev70340.service-now.com',
   username: 'admin',
-  password: 'BY0N0EAmbydn'
+  password: 'BY0N0EAmbydn',
   serviceNowTable: 'change_request'
 };
 
@@ -28,8 +28,18 @@ function mainOnObject() {
   const connector = new ServiceNowConnector(options);
   // Test the object's get and post methods.
   // You must write the arguments for get and post.
-  connector.get(options);
-  connector.post(options);
+  connector.get((data, error) => {
+    if (error) {
+      console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
+    }
+    console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`)
+  });  
+  connector.post((data, error) => {
+    if (error) {
+      console.error(`\nError returned from POST request:\n${JSON.stringify(error)}`);
+    }
+    console.log(`\nResponse returned from POST request:\n${JSON.stringify(data)}`)
+  });
 
 }
 
